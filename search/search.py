@@ -86,18 +86,68 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Frontier is a LIFO stack -> always expands the deepest node first.
+    # Each entry is (state, path) where path = actions taken from the start.
+    frontier = util.Stack()
+    frontier.push((problem.getStartState(), []))
+
+    # Graph search: remember expanded states so we never expand one twice.
+    visited = set()
+
+    while not frontier.isEmpty():
+        state, path = frontier.pop()
+
+        if problem.isGoalState(state):
+            return path
+
+        if state in visited:
+            continue
+        visited.add(state)
+
+        for successor, action, stepCost in problem.getSuccessors(state):
+            if successor not in visited:
+                frontier.push((successor, path + [action]))
+
+    return []  # no solution found
+    
 
 def breadthFirstSearch(problem: SearchProblem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Same structure as DFS, but a FIFO queue -> expands the shallowest node
+    # first, which guarantees the fewest-steps solution.
+    frontier = util.Queue()
+    frontier.push((problem.getStartState(), []))
+
+    visited = set()
+
+    while not frontier.isEmpty():
+        state, path = frontier.pop()
+
+        if problem.isGoalState(state):
+            return path
+
+        if state in visited:
+            continue
+        visited.add(state)
+
+        for successor, action, stepCost in problem.getSuccessors(state):
+            if successor not in visited:
+                frontier.push((successor, path + [action]))
+
+    return []  # no solution found
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # --- Part 1: priority queue setup ---
+    # Priority = total path cost g(n) from the start, so the cheapest node
+    # is always popped first.
+    frontier = util.PriorityQueue()
+    startState = problem.getStartState()
+    # Each entry is (state, path, costSoFar); the priority is costSoFar.
+    frontier.push((startState, [], 0), 0)
+
+    # Best known cost to reach each state (path-cost tracking).
+    bestCost = {startState: 0}
+    visited = set()
 
 def nullHeuristic(state, problem=None):
     """
