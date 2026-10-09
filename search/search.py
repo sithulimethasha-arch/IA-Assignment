@@ -86,8 +86,30 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Frontier is a LIFO stack -> always expands the deepest node first.
+    # Each entry is (state, path) where path = actions taken from the start.
+    frontier = util.Stack()
+    frontier.push((problem.getStartState(), []))
+
+    # Graph search: remember expanded states so we never expand one twice.
+    visited = set()
+
+    while not frontier.isEmpty():
+        state, path = frontier.pop()
+
+        if problem.isGoalState(state):
+            return path
+
+        if state in visited:
+            continue
+        visited.add(state)
+
+        for successor, action, stepCost in problem.getSuccessors(state):
+            if successor not in visited:
+                frontier.push((successor, path + [action]))
+
+    return []  # no solution found
+    
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
