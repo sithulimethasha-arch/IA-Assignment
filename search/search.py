@@ -193,6 +193,41 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     bestCost = {startState: 0}
     visited = set()
 
+    #sadeep
+    
+    # Priority = f(n) = g(n) + h(n).
+    frontier = util.PriorityQueue()
+    startState = problem.getStartState()
+    # Each entry is (state, path, g); the priority is f = g + h.
+    frontier.push((startState, [], 0), heuristic(startState, problem))
+
+    # Best known g(n) for each state (path-cost tracking).
+    bestCost = {startState: 0}
+    visited = set()
+
+    while not frontier.isEmpty():
+        state, path, g = frontier.pop()
+
+        # Repeated-state handling: skip stale entries for expanded states.
+        if state in visited:
+            continue
+        visited.add(state)
+
+        # Goal test on pop, so the returned path is optimal.
+        if problem.isGoalState(state):
+            return path
+
+        for successor, action, stepCost in problem.getSuccessors(state):
+            newG = g + stepCost
+            # Path-cost update: only push if new, or reached more cheaply.
+            if successor not in visited and \
+                    (successor not in bestCost or newG < bestCost[successor]):
+                bestCost[successor] = newG
+                f = newG + heuristic(successor, problem)
+                frontier.push((successor, path + [action], newG), f)
+
+    return []  # no solution found
+
 
 # Abbreviations
 bfs = breadthFirstSearch
