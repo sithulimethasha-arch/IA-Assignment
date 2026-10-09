@@ -137,8 +137,17 @@ def breadthFirstSearch(problem: SearchProblem):
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # --- Part 1: priority queue setup ---
+    # Priority = total path cost g(n) from the start, so the cheapest node
+    # is always popped first.
+    frontier = util.PriorityQueue()
+    startState = problem.getStartState()
+    # Each entry is (state, path, costSoFar); the priority is costSoFar.
+    frontier.push((startState, [], 0), 0)
+
+    # Best known cost to reach each state (path-cost tracking).
+    bestCost = {startState: 0}
+    visited = set()
 
 def nullHeuristic(state, problem=None):
     """
