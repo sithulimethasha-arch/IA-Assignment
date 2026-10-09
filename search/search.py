@@ -149,6 +149,30 @@ def uniformCostSearch(problem: SearchProblem):
     bestCost = {startState: 0}
     visited = set()
 
+    #dewshan
+    while not frontier.isEmpty():
+        state, path, cost = frontier.pop()
+
+        # Skip stale entries: a cheaper route to this state was already expanded.
+        if state in visited:
+            continue
+        visited.add(state)
+
+        # Goal test on POP (not on push) so the returned path is optimal.
+        if problem.isGoalState(state):
+            return path
+
+        # --- Part 1: successor insertion ---
+        for successor, action, stepCost in problem.getSuccessors(state):
+            newCost = cost + stepCost
+            if successor not in visited and \
+                    (successor not in bestCost or newCost < bestCost[successor]):
+                bestCost[successor] = newCost
+                frontier.push((successor, path + [action], newCost), newCost)
+
+    return []  # no solution found
+
+
 def nullHeuristic(state, problem=None):
     """
     A heuristic function estimates the cost from the current state to the nearest
