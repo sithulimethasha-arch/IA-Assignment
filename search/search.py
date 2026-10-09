@@ -112,9 +112,28 @@ def depthFirstSearch(problem: SearchProblem):
     
 
 def breadthFirstSearch(problem: SearchProblem):
-    """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    # Same structure as DFS, but a FIFO queue -> expands the shallowest node
+    # first, which guarantees the fewest-steps solution.
+    frontier = util.Queue()
+    frontier.push((problem.getStartState(), []))
+
+    visited = set()
+
+    while not frontier.isEmpty():
+        state, path = frontier.pop()
+
+        if problem.isGoalState(state):
+            return path
+
+        if state in visited:
+            continue
+        visited.add(state)
+
+        for successor, action, stepCost in problem.getSuccessors(state):
+            if successor not in visited:
+                frontier.push((successor, path + [action]))
+
+    return []  # no solution found
 
 def uniformCostSearch(problem: SearchProblem):
     """Search the node of least total cost first."""
